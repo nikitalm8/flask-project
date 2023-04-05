@@ -1,0 +1,1 @@
+database_url: sqlite+aiosqlite:///app/database/database.db
