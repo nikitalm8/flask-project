@@ -23,7 +23,7 @@ blueprint = Blueprint("admin", __name__, url_prefix="/admin")
 blueprint.before_request(LevelChecker(2))
 
 @blueprint.route("/")
-async def index():
+def index():
 
     page = request.args.get('page', 1, type=int)
     pagination = User.query.paginate(page=page, per_page=10)
@@ -37,7 +37,7 @@ async def index():
 
 
 @blueprint.route("/delete/<int:user_id>", methods=['POST'])
-async def delete_user(user_id: int):
+def delete_user(user_id: int):
 
     session: Session = request.environ['session']
 
@@ -61,7 +61,7 @@ async def delete_user(user_id: int):
 
 
 @blueprint.route("/edit/<int:user_id>", methods=['GET', 'POST'])
-async def edit_user(user_id: int):
+def edit_user(user_id: int):
 
     session: Session = request.environ['session']
     user = session.scalar(

@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
-{% from 'bootstrap5/pagination.html' import render_pagination %}
-{% from 'bootstrap5/table.html' import render_table %}
+{% from 'bootstrap5/utils.html' import render_icon %}
 
 {% block content %}
 
-<h2>Ваши данные: </h2>
+<h3>Ваши данные: </h3>
 
-<p>Логин: {{ current_user.username }}</p>
-<p>Дата создания: {{ current_user.created_at }}</p>
+<div><b>{{ render_icon('file-earmark-person') }} Логин:</b> {{ current_user.username }}</div>
+<div><b>{{ render_icon('calendar-event-fill') }} Дата создания:</b> {{ current_user.created_at }}</div>
 
-<a href="{{ url_for('profile.edit') }}">Изменить данные</a><br>
-<a href="{{ url_for('profile.delete_user') }}">Удалить профиль</a>
+<p></p>
+
+<a class="btn btn-primary text-white" href="{{ url_for('profile.edit') }}">Изменить данные {{ render_icon('pencil-fill') }}</a>
+<a class="btn btn-danger text-white" href="{{ url_for('profile.edit') }}">Удалить профиль {{ render_icon('trash') }}</a>
 
 {% endblock %}

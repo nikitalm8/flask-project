@@ -50,7 +50,7 @@ def news(news_id: int):
 
 @blueprint.route("/create", methods=["GET", "POST"])
 @is_admin
-async def create():
+def create():
 
     form = CreateForm()
 
@@ -76,7 +76,7 @@ async def create():
 
 @blueprint.route("/edit/<int:id>") 
 @is_admin
-async def edit(id: int):
+def edit(id: int):
 
     session: Session = request.environ['session']
     news = session.get(News, id)
@@ -99,7 +99,7 @@ async def edit(id: int):
 
 @blueprint.route("/edit/<int:id>", methods=["POST"])
 @is_admin
-async def edit_post(id: int):
+def edit_post(id: int):
 
     session: Session = request.environ['session']
     news = session.get(News, id)
@@ -119,7 +119,7 @@ async def edit_post(id: int):
 
 @blueprint.route("/delete/<int:id>", methods=["POST"])
 @is_admin
-async def delete_news(id: int):
+def delete_news(id: int):
 
     session: Session = request.environ['session']
 
