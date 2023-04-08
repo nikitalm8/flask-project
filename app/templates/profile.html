@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/pagination.html' import render_pagination %}
+{% from 'bootstrap5/table.html' import render_table %}
+
+{% block content %}
+
+<h2>Ваши данные: </h2>
+
+<p>Логин: {{ current_user.username }}</p>
+<p>Дата создания: {{ current_user.created_at }}</p>
+
+<a href="{{ url_for('profile.edit') }}">Изменить данные</a><br>
+<a href="{{ url_for('profile.delete_user') }}">Удалить профиль</a>
+
+{% endblock %}

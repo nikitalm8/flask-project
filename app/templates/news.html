@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>{{ news.title }}</h1>
-    <p>{{ news.text }}</p>
-    <a href="/news">Назад</a>
-</body>
-</html>
+{% extends 'base.html' %}
+{% from 'bootstrap5/pagination.html' import render_pagination %}
+{% from 'bootstrap5/table.html' import render_table %}
+
+{% block content %}
+
+<h2>{{ news.title }}</h2>
+<p>{{ news.created_at }}</p>
+
+<p>{{ news.text}}</p>
+<a href="{{ url_for('news.index') }}">Назад</a>
+
+{% endblock %}

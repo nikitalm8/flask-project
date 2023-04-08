@@ -8,10 +8,14 @@
 
 {{ render_table(
     items, 
-    [("id", "#"), ("title", "Название")],
-    show_actions=True,
+    [("href", "Название"), ("created_at", "Дата создания")],
+    show_actions=current_user.is_authenticated and current_user.admin_level > 0,
+    safe_columns=['href'],
     model=News,
-    new_url=url_for('admin.create'),
+    new_url=url_for('news.create'),
+    delete_url=('news.delete_news', [('id', ':id')]),
+    edit_url=('news.edit', [('id', ':id')]),
+    view_url=('news.news', [('news_id', ':id')]),
 ) }}
 {{ render_pagination(pagination) }}
 

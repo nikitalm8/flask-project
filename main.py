@@ -1,38 +1,43 @@
 import yaml
-import asyncio
 
-from app import views, middlewares, utils
-from app.database import create_sessionmaker
+from app import views, middlewares
+from app.database import db, load_user
 
 from flask import Flask
 from flask_wtf import CSRFProtect
+from flask_login import LoginManager
 from flask_bootstrap import Bootstrap5
-from flask_sqlalchemy import SQLAlchemy
 
 
-async def main():
+def main():
     
     app = Flask(__name__, static_url_path='')
+    
     app.secret_key = 'secret'
-    app.config = yaml.safe_load(open('config.yaml'))
+    app.static_folder = 'app/static'
+    app.template_folder = 'app/templates'
+    app.config.update(
+        **yaml.safe_load(open('config.yaml')),
+    )
     
     bootstrap = Bootstrap5(app)
     csrf = CSRFProtect(app)
     
+    login_manager = LoginManager(app)
+    login_manager.user_loader(load_user)
+    login_manager.login_view = 'auth.login'
+
     with app.app_context():
-        
-        db = SQLAlchemy(app)
+
+        db.init_app(app)
         db.create_all()
-    
-    app.static_folder = 'app/static'
-    app.template_folder = 'app/templates'
 
     views.setup(app)
-    middlewares.setup(app, sessionmaker)
+    middlewares.setup(app, db)
 
     app.run(port=1488)
 
 
 if __name__ == '__main__':
     
-    asyncio.run(main())
+    main()

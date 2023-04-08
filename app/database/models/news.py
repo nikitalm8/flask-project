@@ -1,12 +1,26 @@
-from . import Base
+from app.database import db
 
-from sqlalchemy.orm import Mapped, mapped_column
+from datetime import date
+from flask import url_for
 
 
-class News(Base):
-    __tablename__ = "news"
+class News(db.Model):
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: db.Mapped[int] = db.mapped_column(primary_key=True, autoincrement=True)
     
-    title: Mapped[str] = mapped_column()
-    text: Mapped[str] = mapped_column()
+    title: db.Mapped[str] = db.mapped_column()
+    text: db.Mapped[str] = db.mapped_column()
+    
+    created_at: db.Mapped[date] = db.mapped_column(default=date.today)
+    # created_by = db.Column(db.Integer, db.ForeignKey("User.id"), nullable=False)
+
+    @property
+    def url(self):
+        
+        return url_for("news.news", news_id=self.id)
+
+    @property
+    def href(self):
+        
+        return '<a href="%s">%s</a>' % (self.url, self.title)
+    

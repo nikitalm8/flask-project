@@ -1,127 +1,147 @@
-from app.database.models import News
+from app.database.models import User
+from app.utils.login import LevelChecker
+from app.utils.forms import EditUserAdminForm
 
-from flask import Flask, Blueprint, request, render_template, redirect, flash
-from flask_wtf import FlaskForm
-from wtforms import fields, validators
+from flask import (
+    Flask, 
+    Blueprint, 
+    render_template, 
+    redirect, 
+    flash,
+    url_for,
+    request, 
+)
+from flask_login import current_user
 
 from sqlalchemy import delete
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.future import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
-
-class NewsForm(FlaskForm):
-
-    title = fields.StringField(label='Название статьи', validators=[validators.DataRequired()])
-    text = fields.TextAreaField(label='Текст статьи', validators=[validators.DataRequired()])
-
-class CreateForm(NewsForm):
-
-    submit = fields.SubmitField(label='Создать')
-
-class UpdateForm(NewsForm):
-
-    submit = fields.SubmitField(label='Обновить')
 
 
 blueprint = Blueprint("admin", __name__, url_prefix="/admin")
-
+blueprint.before_request(LevelChecker(2))
 
 @blueprint.route("/")
 async def index():
 
-    session: AsyncSession = request.environ['session']
     page = request.args.get('page', 1, type=int)
-
-    pagination = await News.paginate(session, page, 10)
+    pagination = User.query.paginate(page=page, per_page=10)
     
     return render_template(
-        "pagination.html", 
+        "users.html", 
         pagination=pagination,
         items=pagination.items,
-        News=News,
+        User=User,
     )
 
 
-@blueprint.route("/create")
-async def create():
+@blueprint.route("/delete/<int:user_id>", methods=['POST'])
+async def delete_user(user_id: int):
 
-    return render_template(
-        "form.html", 
-        title='Создание поста', 
-        form=CreateForm(),
+    session: Session = request.environ['session']
+
+    admin_level = session.scalar(
+        select(User.admin_level)
+        .where(User.id == user_id)
     )
+    if admin_level >= current_user.admin_level:
 
-
-@blueprint.route("/create", methods=["POST"])
-async def create_post():
-
-    session: AsyncSession = request.environ['session']
-
-    session.add(
-        News(
-            title=request.form['title'],
-            text=request.form['text'],
-        )
-    )
-    await session.commit()
+        flash('Недостаточно прав для удаления данного пользователя!', 'danger')
+        return redirect(url_for('admin.index'))
     
-    return redirect("/admin")
-
-
-@blueprint.route("/edit/<int:id>")  
-async def edit(id: int):
-
-    session: AsyncSession = request.environ['session']
-    news = await session.get(News, id)
-
-    if not news:
-
-        flash('Пост не найден!', 'danger')
-        return redirect("/admin")
-
-    form = UpdateForm(
-        title=news.title,
-        text=news.text,
+    session.execute(
+        delete(User)
+        .where(User.id == user_id)
     )
-    return render_template(
-        "form.html",
-        title='Редактирование поста',
-        form=form,
+    session.commit()
+
+    flash('Пользователь успешно удален!', 'success')
+    return redirect(url_for('admin.index'))
+
+
+@blueprint.route("/edit/<int:user_id>", methods=['GET', 'POST'])
+async def edit_user(user_id: int):
+
+    session: Session = request.environ['session']
+    user = session.scalar(
+        select(User)
+        .where(User.id == user_id)
     )
 
+    if user.admin_level >= current_user.admin_level:
 
-@blueprint.route("/edit/<int:id>", methods=["POST"])
-async def edit_post(id: int):
+        flash('Недостаточно прав для редактирования данного пользователя!', 'danger')
+        return redirect(url_for('admin.index'))
+    
+    form = EditUserAdminForm(obj=user)
 
-    session: AsyncSession = request.environ['session']
-    news = await session.get(News, id)
+    if not form.validate_on_submit():
+        
+        return render_template(
+            "form.html",
+            title='Редактирование пользователя', 
+            form=form,
+        )
 
-    if not news:
+    if int(form.admin_level.data) >= current_user.admin_level:
 
-        flash('Пост не найден!', 'danger')
-        return redirect("/admin")
+        flash('Вы не можете выдать эти привелегии!', 'danger')
+        return redirect(url_for('admin.index'))
 
-    news.title = request.form['title']
-    news.text = request.form['text']
-    await session.commit()
+    user.username = form.username.data
+    user.admin_level = int(form.admin_level.data)
 
-    flash('Пост обновлен!', 'success')
-    return redirect("/admin")
+    if not user.check_password(form.password.data):
+
+        user.update_password(form.password.data)
+    
+    session.commit()
+
+    flash('Пользователь успешно отредактирован!', 'success')
+    return redirect(url_for('admin.index'))
 
 
-@blueprint.route("/delete/<int:id>", methods=["POST"])
-async def delete_get(id: int):
+@blueprint.route("/create", methods=['GET', 'POST'])
+def create_user():
 
-    session: AsyncSession = request.environ['session']
+    form = EditUserAdminForm()
 
-    await session.execute(
-        delete(News)
-        .where(News.id == id)
+    if not form.validate_on_submit():
+
+        return render_template(
+            "form.html",
+            title='Создание пользователя', 
+            form=form,
+        )
+
+    if int(form.admin_level.data) >= current_user.admin_level:
+
+        flash('Вы не можете выдать эти привелегии!', 'danger')
+        return redirect(url_for('admin.index'))
+
+    session: Session = request.environ['session']
+    
+    user = User(
+        username=form.username.data,
+        admin_level=int(form.admin_level.data),
     )
-    await session.commit()
+    user.update_password(form.password.data)
 
-    flash('Пост удален!', 'success')
-    return redirect("/admin")
+    try:
+
+        session.add(user)
+        session.commit()
+
+    except IntegrityError:
+
+        flash('Пользователь с таким именем уже существует!', 'danger')
+
+    else:
+
+        flash('Пользователь успешно создан!', 'success')
+        
+    return redirect(url_for('admin.index'))
 
 
 def setup(app: Flask):
