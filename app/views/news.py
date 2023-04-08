@@ -23,7 +23,7 @@ blueprint = Blueprint("news", __name__)
 def index():
 
     page = request.args.get('page', 1, type=int)
-    pagination = News.query.paginate(page=page, per_page=10)
+    pagination = News.query.order_by(News.created_at.desc()).paginate(page=page, per_page=10)
     
     return render_template(
         "pagination.html", 
