@@ -1,4 +1,4 @@
-# Simple Weather Bot
+# Sample Flask Project
 
 ## Requirements
 - Python 3.9+
@@ -17,7 +17,7 @@ $ sudo apt update && sudo apt upgrade
 $ sudo apt install python3 python3-pip python3-venv
 ```
 
-### Setup virtual environment and install dependencies, update `config.yaml` file
+### Setup virtual environment and install dependencies
 ```bash
 $ python3 -m venv env
 $ source env/bin/activate
