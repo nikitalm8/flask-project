@@ -1,1 +1,2 @@
-database_url: sqlite+aiosqlite:///app/database/database.db
+SQLALCHEMY_TRACK_MODIFICATIONS: false
+SQLALCHEMY_DATABASE_URI: sqlite:///app/database/database.db

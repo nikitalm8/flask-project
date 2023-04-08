@@ -1,4 +1,5 @@
 from . import (
+    admin,
     home,
 )
 
@@ -12,4 +13,5 @@ def setup(app: Flask):
     :param Flask app: Flask app instance
     """
 
+    admin.setup(app)
     home.setup(app)
