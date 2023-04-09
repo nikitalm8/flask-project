@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 class SessionMiddleware(object):
 
 
-    def __init__(self, app, db: SQLAlchemy):
+    def __init__(self, app: callable, db: SQLAlchemy):
 
         self.app = app
         self.db = db

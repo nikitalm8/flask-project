@@ -16,7 +16,7 @@ class User(db.Model, UserMixin):
     created_at: db.Mapped[datetime] = db.mapped_column(default=datetime.utcnow)
     admin_level: db.Mapped[int] = db.mapped_column(default=0)
 
-    def update_password(self, password: str):
+    def update_password(self, password: str) -> str:
         
         self.password = generate_password_hash(password)
 

@@ -12,15 +12,14 @@ class News(db.Model):
     text: db.Mapped[str] = db.mapped_column()
     
     created_at: db.Mapped[date] = db.mapped_column(default=date.today)
-    # created_by = db.Column(db.Integer, db.ForeignKey("User.id"), nullable=False)
 
     @property
-    def url(self):
+    def url(self) -> str:
         
         return url_for("news.news", news_id=self.id)
 
     @property
-    def href(self):
+    def href(self) -> str:
         
         return '<a href="%s">%s</a>' % (self.url, self.title)
     

@@ -24,6 +24,7 @@ csrf = CSRFProtect(app)
 login_manager = LoginManager(app)
 login_manager.user_loader(load_user)
 login_manager.login_view = 'auth.login'
+login_manager.login_message = 'Для доступа к этой странице необходимо авторизоваться'
 
 with app.app_context():
 

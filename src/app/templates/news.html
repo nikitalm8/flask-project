@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% from 'bootstrap5/pagination.html' import render_pagination %}
 {% from 'bootstrap5/table.html' import render_table %}
+{% from 'bootstrap5/utils.html' import render_icon %}
 
 {% block content %}
 
@@ -8,6 +9,6 @@
 <p>{{ news.created_at }}</p>
 
 <p>{{ news.text}}</p>
-<a href="{{ url_for('news.index') }}">Назад</a>
+<a class="btn btn-primary text-white" href="{{ url_for('news.index') }}">Назад {{ render_icon('box-arrow-in-left') }}</a>
 
 {% endblock %}

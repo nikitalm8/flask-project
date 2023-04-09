@@ -6,14 +6,15 @@ class LoginForm(FlaskForm):
 
     username = fields.StringField(
         label='Имя пользователя', 
-        validators=[validators.DataRequired(), validators.Length(min=5, max=20)],
+        validators=[validators.DataRequired()],
     )
     password = fields.PasswordField(
         label='Пароль', 
-        validators=[validators.DataRequired(), validators.Length(min=8)],
+        validators=[validators.DataRequired()],
     )
     remember = fields.BooleanField(label='Запомнить меня')
     submit = fields.SubmitField(label='Войти')
+
 
 class RegisterForm(FlaskForm):
 
@@ -37,9 +38,11 @@ class NewsForm(FlaskForm):
     title = fields.StringField(label='Название статьи', validators=[validators.DataRequired()])
     text = fields.TextAreaField(label='Текст статьи', validators=[validators.DataRequired()])
 
+
 class CreateForm(NewsForm):
 
     submit = fields.SubmitField(label='Создать')
+
 
 class UpdateForm(NewsForm):
 
@@ -51,22 +54,22 @@ class DeleteUserForm(FlaskForm):
     submit = fields.SubmitField(label='Удалить')
     cancel = fields.SubmitField(label='Отмена')
 
+
 class EditUserForm(FlaskForm):
 
-    username = fields.StringField(label='Имя пользователя', validators=[validators.DataRequired()])
+    username = fields.StringField(label='Имя пользователя', validators=[validators.DataRequired(), validators.Length(min=5, max=20)])
     password = fields.PasswordField(label='Пароль', validators=[validators.DataRequired(), validators.Length(min=8)])
     
-    submit = fields.SubmitField(label='Обновить')
+    submit = fields.SubmitField(label='Применить')
+
 
 class EditUserAdminForm(EditUserForm):
     
-    username = fields.StringField(label='Имя пользователя', validators=[validators.DataRequired()])
+    username = fields.StringField(label='Имя пользователя', validators=[validators.DataRequired(), validators.Length(min=5, max=20)])
     password = fields.PasswordField(label='Пароль', validators=[validators.DataRequired(), validators.Length(min=8)])
     admin_level = fields.SelectField(
         label='Уровень администратора', 
         choices=[(0, 'Пользователь'), (1, 'Модератор'), (2, 'Администратор')],
     )
     
-    submit = fields.SubmitField(label='Обновить')
-
-    
+    submit = fields.SubmitField(label='Применить')
