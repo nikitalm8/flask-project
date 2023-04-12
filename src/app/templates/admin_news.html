@@ -13,8 +13,8 @@
     safe_columns=['href'],
     model=News,
     new_url=url_for('admin_news.create'),
-    delete_url=('admin_news.delete_news', [('id', ':id')]),
-    edit_url=('admin_news.edit', [('id', ':id')]),
+    delete_url=('admin_news.delete_news', [('news_id', ':id')]),
+    edit_url=('admin_news.edit', [('news_id', ':id')]),
 ) }}
 {{ render_pagination(pagination) }}
 
