@@ -1,4 +1,4 @@
-from app.database.models import User
+from app.database.models import User, News, Category
 from app.utils.login import LevelChecker
 from app.utils.forms import EditUserAdminForm
 
@@ -19,7 +19,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.future import select
 
 
-blueprint = Blueprint("admin", __name__, url_prefix="/admin")
+blueprint = Blueprint("admin_users", __name__, url_prefix="/admin/users")
 blueprint.before_request(LevelChecker(2))
 
 @blueprint.route("/")
@@ -29,14 +29,14 @@ def index():
     pagination = User.query.paginate(page=page, per_page=10)
     
     return render_template(
-        "users.html", 
+        "admin_users.html", 
         pagination=pagination,
         items=pagination.items,
         User=User,
     )
 
 
-@blueprint.route("/delete/<int:user_id>", methods=['POST'])
+@blueprint.route("/<int:user_id>/delete", methods=['POST'])
 def delete_user(user_id: int):
 
     session: Session = request.environ['session']
@@ -48,7 +48,7 @@ def delete_user(user_id: int):
     if admin_level >= current_user.admin_level:
 
         flash('Недостаточно прав для удаления данного пользователя!', 'danger')
-        return redirect(url_for('admin.index'))
+        return redirect(url_for('.index'))
     
     session.execute(
         delete(User)
@@ -57,11 +57,11 @@ def delete_user(user_id: int):
     session.commit()
 
     flash('Пользователь успешно удален!', 'success')
-    return redirect(url_for('admin.index'))
+    return redirect(url_for('.index'))
 
 
-@blueprint.route("/edit/<int:user_id>", methods=['GET', 'POST'])
-def edit_user(user_id: int):
+@blueprint.route("/<int:user_id>/edit", methods=['GET', 'POST'])
+def edit(user_id: int):
 
     session: Session = request.environ['session']
     user = session.scalar(
@@ -72,7 +72,7 @@ def edit_user(user_id: int):
     if user.admin_level >= current_user.admin_level:
 
         flash('Недостаточно прав для редактирования данного пользователя!', 'danger')
-        return redirect(url_for('admin.index'))
+        return redirect(url_for('.index'))
     
     form = EditUserAdminForm(obj=user)
 
@@ -87,7 +87,7 @@ def edit_user(user_id: int):
     if int(form.admin_level.data) >= current_user.admin_level:
 
         flash('Вы не можете выдать эти привелегии!', 'danger')
-        return redirect(url_for('admin.index'))
+        return redirect(url_for('.index'))
 
     user.username = form.username.data
     user.admin_level = int(form.admin_level.data)
@@ -99,11 +99,11 @@ def edit_user(user_id: int):
     session.commit()
 
     flash('Пользователь успешно отредактирован!', 'success')
-    return redirect(url_for('admin.index'))
+    return redirect(url_for('.index'))
 
 
 @blueprint.route("/create", methods=['GET', 'POST'])
-def create_user():
+def create():
 
     form = EditUserAdminForm()
 
@@ -118,7 +118,7 @@ def create_user():
     if int(form.admin_level.data) >= current_user.admin_level:
 
         flash('Вы не можете выдать эти привелегии!', 'danger')
-        return redirect(url_for('admin.index'))
+        return redirect(url_for('.index'))
 
     session: Session = request.environ['session']
     
@@ -141,12 +141,12 @@ def create_user():
 
         flash('Пользователь успешно создан!', 'success')
         
-    return redirect(url_for('admin.index'))
+    return redirect(url_for('.index'))
 
 
 def setup(app: Flask):
     """
-    Setup all the views for admin.
+    Setup all the views for admin users.
 
     :param Flask app: Flask app instance
     """

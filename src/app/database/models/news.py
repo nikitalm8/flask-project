@@ -5,6 +5,7 @@ from flask import url_for
 
 
 class News(db.Model):
+    __tablename__ = 'news'
 
     id: db.Mapped[int] = db.mapped_column(primary_key=True, autoincrement=True)
     

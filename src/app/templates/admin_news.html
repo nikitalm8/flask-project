@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/pagination.html' import render_pagination %}
+{% from 'bootstrap5/table.html' import render_table %}
+
+{% block content %}
+
+<h2>Новости</h2>
+
+{{ render_table(
+    items, 
+    [("href", "Название"), ("created_at", "Дата создания")],
+    show_actions=True,
+    safe_columns=['href'],
+    model=News,
+    new_url=url_for('admin_news.create'),
+    delete_url=('admin_news.delete_news', [('id', ':id')]),
+    edit_url=('admin_news.edit', [('id', ':id')]),
+) }}
+{{ render_pagination(pagination) }}
+
+{% endblock %}

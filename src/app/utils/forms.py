@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import fields, validators
+from wtforms import fields, validators, widgets
 
 
 class LoginForm(FlaskForm):
@@ -31,12 +31,17 @@ class RegisterForm(FlaskForm):
         validators=[validators.DataRequired(), validators.EqualTo('password')],
     )
     submit = fields.SubmitField(label='Зарегистрироваться')
-
+    
+class MultiCheckboxField(fields.SelectMultipleField):
+    
+    widget = widgets.ListWidget(prefix_label=False, html_tag='ul')
+    option_widget = widgets.CheckboxInput()
 
 class NewsForm(FlaskForm):
 
     title = fields.StringField(label='Название статьи', validators=[validators.DataRequired()])
     text = fields.TextAreaField(label='Текст статьи', validators=[validators.DataRequired()])
+    categories = MultiCheckboxField(label='Категории', coerce=int)
 
 
 class CreateForm(NewsForm):
@@ -73,3 +78,23 @@ class EditUserAdminForm(EditUserForm):
     )
     
     submit = fields.SubmitField(label='Применить')
+
+
+class CreateCategoryForm(FlaskForm):
+
+    title = fields.StringField(label='Название категории', validators=[validators.DataRequired()])
+    submit = fields.SubmitField(label='Создать')
+
+
+class UpdateCategoryForm(FlaskForm):
+
+    title = fields.StringField(label='Название категории', validators=[validators.DataRequired()])
+    submit = fields.SubmitField(label='Обновить')
+
+
+class CategorySelectForm(FlaskForm):
+
+    categories = MultiCheckboxField(label='Категории', coerce=int)
+    page = fields.HiddenField(default=1)
+    
+    submit = fields.SubmitField(label='Применить фильтр')

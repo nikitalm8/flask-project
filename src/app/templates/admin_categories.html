@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/pagination.html' import render_pagination %}
+{% from 'bootstrap5/table.html' import render_table %}
+
+{% block content %}
+
+<h2>Категории</h2>
+
+{{ render_table(
+    items, 
+    [("id", "#"), ("title", "Название")],
+    show_actions=True,
+    model=Category,
+    new_url=url_for('admin_categories.create'),
+    delete_url=('admin_categories.delete_category', [('category_id', ':id')]),
+    view_url=('news.index', [('categories', ':id')]),
+) }}
+{{ render_pagination(pagination) }}
+
+{% endblock %}

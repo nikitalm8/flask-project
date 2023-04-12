@@ -1,7 +1,5 @@
 from . import (
     admin,
-    auth,
-    news,
     user,
 )
 
@@ -16,6 +14,4 @@ def setup(app: Flask):
     """
 
     admin.setup(app)
-    auth.setup(app)
-    news.setup(app)
     user.setup(app)

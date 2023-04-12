@@ -14,6 +14,9 @@
         footer {
             margin: 20px;
         }
+        ul {
+            list-style-type: none;
+        }
     </style>
 </head>
 <body>
@@ -21,14 +24,21 @@
         <div class="container">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon">asdfasfasfd</span>
+            <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 {{ render_nav_item('news.index', 'Новости') }}
                 {% if current_user.is_authenticated %}
                     {% if current_user.admin_level > 1 %}
-                        {{ render_nav_item('admin.index', 'Админ-панель') }}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">Админ-панель</a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdown01">
+                                <li><a class="dropdown-item" href="{{ url_for('admin_users.index') }}">Пользователи</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin_news.index') }}">Новости</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin_categories.index') }}">Категории</a></li>
+                            </ul>
+                        </li>
                     {% endif %}
                     {{ render_nav_item('profile.index', 'Профиль') }}
                     {{ render_nav_item('auth.logout', 'Выйти') }}

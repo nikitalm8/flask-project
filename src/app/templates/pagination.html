@@ -1,22 +1,28 @@
 {% extends 'base.html' %}
 {% from 'bootstrap5/pagination.html' import render_pagination %}
 {% from 'bootstrap5/table.html' import render_table %}
+{% from 'bootstrap5/form.html' import render_form %}
 
 {% block content %}
 
 <h2>Новости</h2>
 
-{{ render_table(
-    items, 
-    [("href", "Название"), ("created_at", "Дата создания")],
-    show_actions=current_user.is_authenticated and current_user.admin_level > 0,
-    safe_columns=['href'],
-    model=News,
-    new_url=url_for('news.create'),
-    delete_url=('news.delete_news', [('id', ':id')]),
-    edit_url=('news.edit', [('id', ':id')]),
-    view_url=('news.news', [('news_id', ':id')]),
-) }}
+<div class="row">
+    <div class="col-md-10">
+        {% for news in items %}
+            <div class="card mb-3">
+                <div class="card-body">
+                <h5 class="card-title">{{ news.title }}</h5>
+                <p class="card-text">{{ news.text | truncate(100) }}</p>
+                <a href="{{ url_for('news.news', news_id=news.id) }}" class="btn btn-primary">Читать далее</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col-md-2">
+        {{ render_form(form) }}
+    </div>
+</div>
 {{ render_pagination(pagination) }}
 
 {% endblock %}
