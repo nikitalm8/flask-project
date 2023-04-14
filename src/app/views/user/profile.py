@@ -40,11 +40,12 @@ def edit():
         )
 
     session: Session = request.environ['session']
-    
     user = session.get(User, current_user.id)
-    
     user.username = form.username.data
-    user.update_password(form.password.data)
+
+    if form.password.data:
+    
+        user.update_password(form.password.data)
 
     session.commit()
 

@@ -43,13 +43,13 @@ def create():
         (category.id, category.title) 
         for category in Category.query.all()
     ]
-
+    
     if not form.validate_on_submit():
 
         return render_template(
             "form.html", 
             title='Создание поста', 
-            form=CreateForm(),
+            form=form,
         )
 
     session: Session = request.environ['session']
@@ -68,7 +68,7 @@ def create():
 def edit(news_id: int):
 
     session: Session = request.environ['session']
-    news = session.get(News, id)
+    news = session.get(News, news_id)
     categories = [
         category[0] for category in
         session.execute(

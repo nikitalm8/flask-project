@@ -2,6 +2,26 @@ from flask_wtf import FlaskForm
 from wtforms import fields, validators, widgets
 
 
+class LengthOrClear(object):
+
+    def __init__(self, min: int):
+
+        self.min = min
+
+    def __call__(self, form, field):
+
+        if not field.data or len(field.data) >= self.min:
+
+            return
+
+        message = field.ngettext(
+            "Field must be at least %(min)d character long.",
+            "Field must be at least %(min)d characters long.",
+            self.min,
+        )
+        raise validators.ValidationError(message % {'min': self.min})
+
+
 class LoginForm(FlaskForm):
 
     username = fields.StringField(
@@ -63,7 +83,7 @@ class DeleteUserForm(FlaskForm):
 class EditUserForm(FlaskForm):
 
     username = fields.StringField(label='Имя пользователя', validators=[validators.DataRequired(), validators.Length(min=5, max=20)])
-    password = fields.PasswordField(label='Пароль', validators=[validators.DataRequired(), validators.Length(min=8)])
+    password = fields.PasswordField(label='Пароль', validators=[LengthOrClear(8)])
     
     submit = fields.SubmitField(label='Применить')
 
@@ -71,7 +91,7 @@ class EditUserForm(FlaskForm):
 class EditUserAdminForm(EditUserForm):
     
     username = fields.StringField(label='Имя пользователя', validators=[validators.DataRequired(), validators.Length(min=5, max=20)])
-    password = fields.PasswordField(label='Пароль', validators=[validators.DataRequired(), validators.Length(min=8)])
+    password = fields.PasswordField(label='Пароль', validators=[LengthOrClear(8)])
     admin_level = fields.SelectField(
         label='Уровень администратора', 
         choices=[(0, 'Пользователь'), (1, 'Модератор'), (2, 'Администратор')],

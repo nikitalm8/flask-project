@@ -92,7 +92,7 @@ def edit(user_id: int):
     user.username = form.username.data
     user.admin_level = int(form.admin_level.data)
 
-    if not user.check_password(form.password.data):
+    if form.password.data:
 
         user.update_password(form.password.data)
     
