@@ -4,17 +4,17 @@
 
 {% block content %}
 
-<h2>Новости</h2>
+<h2>Фильмы</h2>
 
 {{ render_table(
     items, 
     [("href", "Название"), ("created_at", "Дата создания")],
     show_actions=True,
     safe_columns=['href'],
-    model=News,
-    new_url=url_for('admin_news.create'),
-    delete_url=('admin_news.delete_news', [('news_id', ':id')]),
-    edit_url=('admin_news.edit', [('news_id', ':id')]),
+    model=Film,
+    new_url=url_for('admin.create'),
+    delete_url=('admin.delete_film', [('film_id', ':id')]),
+    edit_url=('admin.edit', [('film_id', ':id')]),
 ) }}
 {{ render_pagination(pagination) }}
 

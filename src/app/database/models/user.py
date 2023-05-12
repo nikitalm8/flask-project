@@ -9,12 +9,18 @@ class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id: db.Mapped[int] = db.mapped_column(primary_key=True, autoincrement=True)
-    
+
+    name: db.Mapped[str]
     username: db.Mapped[str] = db.mapped_column(unique=True)
     password: db.Mapped[str] = db.mapped_column(nullable=False)
     
     created_at: db.Mapped[datetime] = db.mapped_column(default=datetime.utcnow)
-    admin_level: db.Mapped[int] = db.mapped_column(default=0)
+    is_admin: db.Mapped[bool] = db.mapped_column(default=False)
+    
+    reviews = db.relationship(
+        "Review",
+        uselist=True,
+    )
 
     def update_password(self, password: str) -> str:
         

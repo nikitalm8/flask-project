@@ -1,4 +1,3 @@
-from .news import News
+from .film import Film
 from .user import User
-from .category import Category
-from .assigned_category import AssignedCategory
+from .review import Review

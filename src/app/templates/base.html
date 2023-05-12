@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Bifle News</title>
+    <title>Bifle Movies</title>
     {{ bootstrap.load_css() }}
     <style>
         h2 {
@@ -58,6 +58,7 @@
     </style>
 </head>
 <body>
+
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
         <div class="container">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -66,33 +67,37 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                {{ render_nav_item('news.index', 'Новости') }}
+                {{ render_nav_item('films.index', 'Главная') }}
+
                 {% if current_user.is_authenticated %}
-                    {% if current_user.admin_level > 1 %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">Админ-панель</a>
-                            <ul class="dropdown-menu" aria-labelledby="dropdown01">
-                                <li><a class="dropdown-item" href="{{ url_for('admin_users.index') }}">Пользователи</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('admin_news.index') }}">Новости</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('admin_categories.index') }}">Категории</a></li>
-                            </ul>
-                        </li>
+
+                    {% if current_user.is_admin %}
+  
+                        {{ render_nav_item('admin.index', 'Панель') }}
+
                     {% endif %}
-                    {{ render_nav_item('profile.index', 'Профиль') }}
+
                     {{ render_nav_item('auth.logout', 'Выйти') }}
+
                 {% else %}
+
                     {{ render_nav_item('auth.login', 'Войти') }}
+
                 {% endif %}
+
             </ul>
         </div>
         </div>
     </nav>
     
     <main class="container">
+
         {{ render_messages(container=False, dismissible=True, dismiss_animate=True) }}
         {% block content %}{% endblock %}
+
     </main>
 
+    <hr>
     <footer class="text-center">
         {% block footer %}
             <small> &copy; 2022–<script>document.write(new Date().getFullYear())</script> <a href="https://github.com/nikitalm8">Nick Bifle</a>

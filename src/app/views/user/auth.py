@@ -46,7 +46,7 @@ def login():
     if user and user.check_password(form.password.data):
 
         login_user(user, remember=form.remember.data)
-        return redirect(url_for('news.index'))
+        return redirect(url_for('films.index'))
 
     flash('Неправильный логин или пароль')
     return redirect(url_for('auth.login'))
@@ -69,7 +69,7 @@ def register():
 
     session: Session = request.environ['session']
     
-    user = User(username=form.username.data)
+    user = User(username=form.username.data, name=form.name.data)
     user.update_password(form.password.data)
 
     try:
@@ -83,14 +83,14 @@ def register():
         return redirect(url_for('auth.register'))
 
     login_user(user)
-    return redirect(url_for('news.index'))
+    return redirect(url_for('films.index'))
 
 
 @blueprint.route("/logout", methods=['GET', 'POST'])  
 def logout():
 
     logout_user()
-    return redirect(url_for('news.index'))
+    return redirect(url_for('films.index'))
 
 
 def setup(app: Flask):

@@ -1,10 +1,8 @@
-from . import category, users, news
+from . import films
 
 from flask import Flask
 
 
 def setup(app: Flask):
-    
-    users.setup(app)
-    category.setup(app)
-    news.setup(app)
+
+    films.setup(app)

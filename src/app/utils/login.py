@@ -9,27 +9,23 @@ from flask import (
 from flask_login import current_user
 
 
-class LevelChecker(object):
-
-    def __init__(self, level: int=1):
-        
-        self.level = level
+class AdminChecker(object):
 
     def __call__(self):
 
-        return check_level(self.level)
+        return check()
 
 
-def check_level(level: int=1):
+def check():
     
     if not current_user.is_authenticated:
         
         return current_app.login_manager.unauthorized()
     
-    if current_user.admin_level < level:
+    if not current_user.is_admin:
 
         flash('У вас недостаточно прав для просмотра этой страницы!', 'danger')
-        return redirect(url_for("news.index"))
+        return redirect(url_for("films.index"))
 
 
 def execute(func, *args, **kwargs):
@@ -47,7 +43,7 @@ def is_admin(func):
     def decorated_view(*args, **kwargs):
 
         return (
-            check_level()
+            check()
             or execute(func, *args, **kwargs)
         )
 

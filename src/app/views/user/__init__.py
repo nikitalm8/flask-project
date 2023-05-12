@@ -1,4 +1,4 @@
-from . import auth, news, profile
+from . import auth, film#, profile
 
 from flask import Flask
 
@@ -6,5 +6,5 @@ from flask import Flask
 def setup(app: Flask):
     
     auth.setup(app)
-    news.setup(app)
-    profile.setup(app)
+    film.setup(app)
+    # profile.setup(app)

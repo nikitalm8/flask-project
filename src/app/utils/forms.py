@@ -22,6 +22,14 @@ class LengthOrClear(object):
         raise validators.ValidationError(message % {'min': self.min})
 
 
+class ReviewForm(FlaskForm):
+
+    text = fields.StringField(label='Ваше мнение о фильме')
+    rating = fields.SelectField(label='Ваша оценка', coerce=int, choices=[(i, i) for i in range(1, 11)])
+
+    submit = fields.SubmitField(label='Опубликовать')
+
+
 class LoginForm(FlaskForm):
 
     username = fields.StringField(
@@ -38,6 +46,10 @@ class LoginForm(FlaskForm):
 
 class RegisterForm(FlaskForm):
 
+    name = fields.StringField(
+        label='Ваше имя',
+        validators=[validators.DataRequired(), validators.Length(min=5, max=20)],
+    )
     username = fields.StringField(
         label='Имя пользователя', 
         validators=[validators.DataRequired(), validators.Length(min=5, max=20)],
@@ -57,20 +69,21 @@ class MultiCheckboxField(fields.SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False, html_tag='ul')
     option_widget = widgets.CheckboxInput()
 
-class NewsForm(FlaskForm):
+class FilmForm(FlaskForm):
 
     title = fields.StringField(label='Название статьи', validators=[validators.DataRequired()])
     text = fields.TextAreaField(label='Текст статьи', validators=[validators.DataRequired()])
-    categories = MultiCheckboxField(label='Категории', coerce=int)
 
 
-class CreateForm(NewsForm):
+class CreateForm(FilmForm):
 
+    image = fields.FileField(label='Афиша', validators=[validators.DataRequired()])
     submit = fields.SubmitField(label='Создать')
 
 
-class UpdateForm(NewsForm):
+class UpdateForm(FilmForm):
 
+    image = fields.FileField(label='Афиша', validators=[])
     submit = fields.SubmitField(label='Обновить')
 
 
